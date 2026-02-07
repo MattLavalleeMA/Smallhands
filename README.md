@@ -1,10 +1,14 @@
 # Smallhands
-Just a simple mod to make small hands
 
+A simple mod that makes item hands smaller.
 
+This project is currently being reworked.
 
-Reworking it right now
+Official release on Modrinth:  
+https://modrinth.com/mod/small-items-mod
 
-Offical release on modrinth https://modrinth.com/mod/small-items-mod
+Everything in this GitHub repository is a work in progress.
 
-Everything on this github page is in a work in progress state
+Info:  
+This code is for Minecraft 1.21.11 and will **not** work on 1.21.10.  
+The Modrinth downloads for older versions are modified separately to support those versions.
