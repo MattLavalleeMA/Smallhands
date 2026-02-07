@@ -1,0 +1,43 @@
+{
+	"schemaVersion": 1,
+	"id": "smallhands",
+	"version": "${version}",
+	"name": "Smallhands",
+	"description": "Make your hands or items Small or Bigger",
+	"authors": [
+		"Sallylabs.net"
+	],
+	"contact": {
+		"homepage": "https://sallylabs.net/"
+	},
+	"license": "Apache-2.0",
+	"icon": "assets/smallhands/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"net.sallylabs.Smallhands"
+		],
+		"client": [
+			"net.sallylabs.SmallhandsClient"
+        ],
+		"modmenu": [
+			"net.sallylabs.SmallhandsModMenu"
+        ]
+	},
+	"mixins": [
+		"smallhands.mixins.json",
+		{
+			"config": "smallhands.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.18.2",
+		"minecraft": "~1.21",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
