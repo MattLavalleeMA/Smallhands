@@ -10,5 +10,5 @@ https://modrinth.com/mod/small-items-mod
 Everything in this GitHub repository is a work in progress.
 
 Info:  
-This code is for Minecraft 1.21.11 and will **not** work on 1.21.10.  
+This code is for Minecraft 1.21.11+ and will **not** work on 1.21.10.  
 The Modrinth downloads for older versions are modified separately to support those versions.
