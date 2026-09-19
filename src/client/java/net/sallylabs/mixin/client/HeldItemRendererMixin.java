@@ -1,20 +1,18 @@
 package net.sallylabs.mixin.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.ItemInHandRenderer;
+import net.minecraft.client.renderer.FirstPersonHandsAndItemsRenderer;
 import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.world.item.ItemStack;
 import net.sallylabs.SmallhandsConfig;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Coerce;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(ItemInHandRenderer.class)
+@Mixin(FirstPersonHandsAndItemsRenderer.class)
 public class HeldItemRendererMixin {
 
     @Unique
@@ -32,31 +30,17 @@ public class HeldItemRendererMixin {
         }
     }
 
-    @Inject(method = "renderItem", at = @At("HEAD"))
-    private void smallhands$preRenderItem(
-            LivingEntity entity,
-            ItemStack stack,
-            ItemDisplayContext displayContext,
-            PoseStack poseStack,
-            @Coerce Object buffer,
-            int packedLight,
-            CallbackInfo ci
-    ) {
-        poseStack.pushPose();
+    @ModifyArg(
+            method = "submitArmWithItem",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/renderer/item/ItemStackRenderState;submit(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;III)V"
+            ),
+            index = 0
+    )
+    private PoseStack smallhands$transformItemPose(PoseStack poseStack) {
         smallhands$apply(poseStack, SmallhandsConfig.get().affectItem);
-    }
-
-    @Inject(method = "renderItem", at = @At("RETURN"))
-    private void smallhands$postRenderItem(
-            LivingEntity entity,
-            ItemStack stack,
-            ItemDisplayContext displayContext,
-            PoseStack poseStack,
-            @Coerce Object buffer,
-            int packedLight,
-            CallbackInfo ci
-    ) {
-        poseStack.popPose();
+        return poseStack;
     }
 
     @Inject(method = "renderPlayerArm", at = @At("HEAD"))
@@ -67,6 +51,7 @@ public class HeldItemRendererMixin {
             float equipProgress,
             float swingProgress,
             HumanoidArm arm,
+            @Coerce Object playerRenderState,
             CallbackInfo ci
     ) {
         poseStack.pushPose();
@@ -81,6 +66,7 @@ public class HeldItemRendererMixin {
             float equipProgress,
             float swingProgress,
             HumanoidArm arm,
+            @Coerce Object playerRenderState,
             CallbackInfo ci
     ) {
         poseStack.popPose();
