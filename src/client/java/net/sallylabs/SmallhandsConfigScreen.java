@@ -109,14 +109,14 @@ public class SmallhandsConfigScreen extends Screen {
 
 
         addRenderableWidget(Button.builder(Component.literal("Done"), b ->
-                Minecraft.getInstance().setScreen(parent)
+                Minecraft.getInstance().setScreenAndShow(parent)
         ).bounds(centerX - 155, y, 150, 20).build());
 
 
         addRenderableWidget(Button.builder(Component.literal("Cancel"), b -> {
             SmallhandsConfig.set(backup);
             SmallhandsConfig.save();
-            Minecraft.getInstance().setScreen(parent);
+            Minecraft.getInstance().setScreenAndShow(parent);
         }).bounds(centerX + 5, y, 150, 20).build());
     }
 
