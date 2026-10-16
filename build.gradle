@@ -34,7 +34,8 @@ fabricApi {
 		modId = "smallhands-test"
 		enableGameTests = false
 		enableClientGameTests = true
-		eula = true
+		// Opt in only when deliberately running the client tests.
+		eula = providers.gradleProperty('acceptMinecraftEula').map { it.toBoolean() }.getOrElse(false)
 	}
 }
 
@@ -64,6 +65,10 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+
 	sourceCompatibility = JavaVersion.VERSION_21
 	targetCompatibility = JavaVersion.VERSION_21
 }

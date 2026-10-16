@@ -10,7 +10,7 @@ https://modrinth.com/mod/small-items-mod
 Everything in this GitHub repository is a work in progress.
 
 Info:  
-This branch is for Minecraft 1.21–1.21.11. One jar supports all of them and needs Java 21.  
+This branch targets Minecraft 1.21.11 and needs Java 21 at runtime. Older 1.21 releases are not yet validated.
 Newer Minecraft versions have their own branches.
 
 ## Building
@@ -27,4 +27,4 @@ Each Minecraft version has its own branch (e.g. `26.3`, `26.2`, `26.1.2`, `1.21`
 
 ## Testing
 
-`./gradlew runClientGameTest` starts a client, checks that the config screen closes properly, and saves first-person screenshots of the hands and held items to `build/run/clientGameTest/screenshots`, along with a `review.md` that shows vanilla and modded side by side with the expected result for each scene. It is not part of `build`; run it locally when changing rendering code and open `review.md` in a Markdown preview. Fabric's client game test API needs Minecraft 1.21.4 or later.
+`./gradlew runClientGameTest -PacceptMinecraftEula=true` starts a client, checks that the config screen closes properly, and saves first-person screenshots of the hands and held items to `build/run/clientGameTest/screenshots`, along with a `review.md` that shows vanilla and modded side by side with the expected result for each scene. It is not part of `build`; run it locally when changing rendering code and open `review.md` in a Markdown preview. Fabric's client game test API needs Minecraft 1.21.4 or later.
