@@ -15,7 +15,7 @@ The Modrinth downloads for older versions are modified separately to support tho
 
 ## Building
 
-Requires Java 25.
+Requires Java 25 for Gradle and Minecraft.
 
 ```sh
 ./gradlew build
@@ -27,4 +27,4 @@ Each Minecraft version has its own branch (e.g. `26.3`, `26.2`, `26.1.2`). Versi
 
 ## Testing
 
-`./gradlew runClientGameTest` starts a client, checks that the config screen closes properly, and saves first-person screenshots of the hands and held items to `build/run/clientGameTest/screenshots`, along with a `review.md` that shows vanilla and modded side by side with the expected result for each scene. It is not part of `build`; run it locally when changing rendering code and open `review.md` in a Markdown preview.
+`./gradlew runClientGameTest -PacceptMinecraftEula=true` starts a client, checks that the config screen closes properly, and saves first-person screenshots of the hands and held items to `build/run/clientGameTest/screenshots`, along with a `review.md` that shows vanilla and modded side by side with the expected result for each scene. It is not part of `build`; run it locally when changing rendering code and open `review.md` in a Markdown preview.
