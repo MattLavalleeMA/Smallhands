@@ -1,13 +1,12 @@
 package net.sallylabs.mixin.client;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.FirstPersonHandsAndItemsRenderer;
-import net.minecraft.world.entity.HumanoidArm;
 import net.sallylabs.SmallhandsConfig;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Coerce;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -16,20 +15,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class HeldItemRendererMixin {
 
     @Unique
-    private static void smallhands$apply(PoseStack poseStack, boolean enabled) {
-        if (!enabled) return;
-
+    private static void smallhands$apply(PoseStack poseStack) {
         SmallhandsConfig.Data cfg = SmallhandsConfig.get();
-
-        float s = cfg.scale;
-        if (s != 1.0f) poseStack.scale(s, s, s);
-
-        float x = cfg.xOffset, y = cfg.yOffset, z = cfg.zOffset;
-        if (x != 0.0f || y != 0.0f || z != 0.0f) {
-            poseStack.translate((double) x, (double) y, (double) z);
+        if (cfg.scale != 1.0f) poseStack.scale(cfg.scale, cfg.scale, cfg.scale);
+        if (cfg.xOffset != 0.0f || cfg.yOffset != 0.0f || cfg.zOffset != 0.0f) {
+            poseStack.translate(cfg.xOffset, cfg.yOffset, cfg.zOffset);
         }
     }
 
+    // The caller pops the pose right after submitting the item, so changing it here is safe.
     @ModifyArg(
             method = "submitArmWithItem",
             at = @At(
@@ -39,36 +33,23 @@ public class HeldItemRendererMixin {
             index = 0
     )
     private PoseStack smallhands$transformItemPose(PoseStack poseStack) {
-        smallhands$apply(poseStack, SmallhandsConfig.get().affectItem);
+        if (SmallhandsConfig.get().affectItem) smallhands$apply(poseStack);
         return poseStack;
     }
 
-    @Inject(method = "renderPlayerArm", at = @At("HEAD"))
-    private void smallhands$preRenderArm(
-            PoseStack poseStack,
-            @Coerce Object buffer,
-            int packedLight,
-            float equipProgress,
-            float swingProgress,
-            HumanoidArm arm,
-            @Coerce Object playerRenderState,
-            CallbackInfo ci
-    ) {
-        poseStack.pushPose();
-        smallhands$apply(poseStack, SmallhandsConfig.get().affectArm);
-    }
-
-    @Inject(method = "renderPlayerArm", at = @At("RETURN"))
-    private void smallhands$postRenderArm(
-            PoseStack poseStack,
-            @Coerce Object buffer,
-            int packedLight,
-            float equipProgress,
-            float swingProgress,
-            HumanoidArm arm,
-            @Coerce Object playerRenderState,
-            CallbackInfo ci
-    ) {
-        poseStack.popPose();
+    // Scale the arm around its on-screen position, right after vanilla moves it there. Scaling any
+    // earlier is around the camera, which only pulls the arm closer (in front of held maps) without
+    // making it look smaller. The caller pushes and pops the pose around this method.
+    @Inject(
+            method = "renderPlayerArm",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lcom/mojang/blaze3d/vertex/PoseStack;translate(FFF)V",
+                    ordinal = 0,
+                    shift = At.Shift.AFTER
+            )
+    )
+    private void smallhands$transformArm(CallbackInfo ci, @Local(argsOnly = true) PoseStack poseStack) {
+        if (SmallhandsConfig.get().affectArm) smallhands$apply(poseStack);
     }
 }
